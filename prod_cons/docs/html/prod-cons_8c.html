@@ -1,0 +1,558 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-BR">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.13.2"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Produto-Consumidor: Referência do Arquivo prod-cons.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+  $(function() { init_search(); });
+/* @license-end */
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">Produto-Consumidor<span id="projectnumber">&#160;1.0.0</span>
+   </div>
+   <div id="projectbrief">Simulação do problema Produtor-Consumidor usando pthreads, semáforos e variáveis de condição.</div>
+  </td>
+    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect"                onmouseover="return searchBox.OnSearchSelectShow()"                onmouseout="return searchBox.OnSearchSelectHide()">&#160;</span>
+          <input type="text" id="MSearchField" value="" placeholder="Busca" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.svg" alt=""/></a>
+          </span>
+        </div>
+</td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Gerado por Doxygen 1.13.2 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() { codefold.init(0); });
+/* @license-end */
+</script>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function(){initNavTree('prod-cons_8c.html',''); initResizable(true); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Carregando...</div>
+<div class="SRStatus" id="Searching">Procurando...</div>
+<div class="SRStatus" id="NoMatches">Nenhuma entrada encontrado</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Estruturas de Dados</a> &#124;
+<a href="#define-members">Definições e Macros</a> &#124;
+<a href="#func-members">Funções</a> &#124;
+<a href="#var-members">Variáveis</a>  </div>
+  <div class="headertitle"><div class="title">Referência do Arquivo prod-cons.c</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Simulação do problema Produtor-Consumidor usando pthreads, semáforos e variáveis de condição.  
+<a href="#details">Mais...</a></p>
+<div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
+<code>#include &lt;pthread.h&gt;</code><br />
+<code>#include &lt;semaphore.h&gt;</code><br />
+<code>#include &lt;unistd.h&gt;</code><br />
+<code>#include &lt;time.h&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Gráfico de dependência de inclusões para prod-cons.c:</div>
+<div class="dyncontent">
+<div class="center"><img src="prod-cons_8c__incl.png" border="0" usemap="#aprod-cons_8c" alt=""/></div>
+<map name="aprod-cons_8c" id="aprod-cons_8c">
+<area shape="rect" title="Simulação do problema Produtor&#45;Consumidor usando pthreads, semáforos e variáveis de condição." alt="" coords="224,5,314,32"/>
+<area shape="rect" title=" " alt="" coords="5,80,66,107"/>
+<area shape="poly" title=" " alt="" coords="229,35,81,81,79,76,227,30"/>
+<area shape="rect" title=" " alt="" coords="89,80,152,107"/>
+<area shape="poly" title=" " alt="" coords="244,35,162,75,159,70,242,30"/>
+<area shape="rect" title=" " alt="" coords="176,80,252,107"/>
+<area shape="poly" title=" " alt="" coords="261,34,235,69,231,66,257,31"/>
+<area shape="rect" title=" " alt="" coords="275,80,372,107"/>
+<area shape="poly" title=" " alt="" coords="280,31,307,66,303,69,276,34"/>
+<area shape="rect" title=" " alt="" coords="395,80,462,107"/>
+<area shape="poly" title=" " alt="" coords="298,30,388,71,386,76,296,35"/>
+<area shape="rect" title=" " alt="" coords="487,80,544,107"/>
+<area shape="poly" title=" " alt="" coords="313,30,473,77,472,82,311,35"/>
+</map>
+</div>
+</div>
+<p><a href="prod-cons_8c_source.html">Ir para o código-fonte desse arquivo.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Estruturas de Dados</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structproducer__args.html">producer_args</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estrutura para encapsular os argumentos a serem passados para cada thread produtora.  <a href="structproducer__args.html#details">Mais...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Definições e Macros</h2></td></tr>
+<tr class="memitem:a6b20d41d6252e9871430c242cb1a56e7" id="r_a6b20d41d6252e9871430c242cb1a56e7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:a6b20d41d6252e9871430c242cb1a56e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define a capacidade máxima do buffer compartilhado.  <br /></td></tr>
+<tr class="separator:a6b20d41d6252e9871430c242cb1a56e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35219978a46af884c0f14963e979dbad" id="r_a35219978a46af884c0f14963e979dbad"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:a35219978a46af884c0f14963e979dbad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define o número de threads produtoras (caixas) a serem criadas.  <br /></td></tr>
+<tr class="separator:a35219978a46af884c0f14963e979dbad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a642ed9b3c92cf525bd21bc6b630e1eed" id="r_a642ed9b3c92cf525bd21bc6b630e1eed"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642ed9b3c92cf525bd21bc6b630e1eed">NUM_CONSUMERS</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:a642ed9b3c92cf525bd21bc6b630e1eed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define o número de threads consumidoras (gerentes) a serem criadas.  <br /></td></tr>
+<tr class="separator:a642ed9b3c92cf525bd21bc6b630e1eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Funções</h2></td></tr>
+<tr class="memitem:a13f485a0cfd6e52c071bef0b7adb70cf" id="r_a13f485a0cfd6e52c071bef0b7adb70cf"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13f485a0cfd6e52c071bef0b7adb70cf">producer</a> (void *args)</td></tr>
+<tr class="memdesc:a13f485a0cfd6e52c071bef0b7adb70cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Função executada pelas threads produtoras (caixas).  <br /></td></tr>
+<tr class="separator:a13f485a0cfd6e52c071bef0b7adb70cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c0ce21bf6fb29cd5d2d0b367f315da1" id="r_a6c0ce21bf6fb29cd5d2d0b367f315da1"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c0ce21bf6fb29cd5d2d0b367f315da1">consumer</a> (void *args)</td></tr>
+<tr class="memdesc:a6c0ce21bf6fb29cd5d2d0b367f315da1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Função executada pela thread consumidora (gerente).  <br /></td></tr>
+<tr class="separator:a6c0ce21bf6fb29cd5d2d0b367f315da1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4" id="r_ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
+<tr class="memdesc:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ponto de entrada principal do programa.  <br /></td></tr>
+<tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variáveis</h2></td></tr>
+<tr class="memitem:aa5b659cea6be80e6d304d4430d270ecd" id="r_aa5b659cea6be80e6d304d4430d270ecd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5b659cea6be80e6d304d4430d270ecd">buffer</a> [<a class="el" href="#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>]</td></tr>
+<tr class="memdesc:aa5b659cea6be80e6d304d4430d270ecd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array de doubles que funciona como o buffer circular compartilhado para armazenar os valores das vendas.  <br /></td></tr>
+<tr class="separator:aa5b659cea6be80e6d304d4430d270ecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad43c3812e6d13e0518d9f8b8f463ffcf" id="r_ad43c3812e6d13e0518d9f8b8f463ffcf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a> = 0</td></tr>
+<tr class="memdesc:ad43c3812e6d13e0518d9f8b8f463ffcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contador que armazena o número atual de itens no buffer.  <br /></td></tr>
+<tr class="separator:ad43c3812e6d13e0518d9f8b8f463ffcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3926cfd7377a5ede3d3dc0a04986d13" id="r_ab3926cfd7377a5ede3d3dc0a04986d13"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3926cfd7377a5ede3d3dc0a04986d13">in_idx</a> = 0</td></tr>
+<tr class="memdesc:ab3926cfd7377a5ede3d3dc0a04986d13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Índice onde o próximo produtor irá inserir um item no buffer.  <br /></td></tr>
+<tr class="separator:ab3926cfd7377a5ede3d3dc0a04986d13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fadacd6eebc32b564c8d08c480b839c" id="r_a7fadacd6eebc32b564c8d08c480b839c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fadacd6eebc32b564c8d08c480b839c">out_idx</a> = 0</td></tr>
+<tr class="memdesc:a7fadacd6eebc32b564c8d08c480b839c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Índice de onde o próximo consumidor irá remover um item do buffer.  <br /></td></tr>
+<tr class="separator:a7fadacd6eebc32b564c8d08c480b839c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4acff8232e4aec9cd5c6dc200ac55ef3" id="r_a4acff8232e4aec9cd5c6dc200ac55ef3"><td class="memItemLeft" align="right" valign="top">pthread_mutex_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a></td></tr>
+<tr class="memdesc:a4acff8232e4aec9cd5c6dc200ac55ef3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutex para garantir o acesso atômico às variáveis compartilhadas e ao buffer.  <br /></td></tr>
+<tr class="separator:a4acff8232e4aec9cd5c6dc200ac55ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4b4123acdd4ff1886c11fd9b0918f19" id="r_ac4b4123acdd4ff1886c11fd9b0918f19"><td class="memItemLeft" align="right" valign="top">sem_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4b4123acdd4ff1886c11fd9b0918f19">empty_slots</a></td></tr>
+<tr class="memdesc:ac4b4123acdd4ff1886c11fd9b0918f19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Semáforo que conta o número de posições vazias no buffer. Inicializado com BUFFER_SIZE.  <br /></td></tr>
+<tr class="separator:ac4b4123acdd4ff1886c11fd9b0918f19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0f9446b575ad1c8a51548638b7af8e0" id="r_ab0f9446b575ad1c8a51548638b7af8e0"><td class="memItemLeft" align="right" valign="top">sem_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0f9446b575ad1c8a51548638b7af8e0">full_slots</a></td></tr>
+<tr class="memdesc:ab0f9446b575ad1c8a51548638b7af8e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Semáforo que conta o número de posições preenchidas no buffer. Inicializado com 0.  <br /></td></tr>
+<tr class="separator:ab0f9446b575ad1c8a51548638b7af8e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87c6d5157fa0f10d82e0abded1d885f3" id="r_a87c6d5157fa0f10d82e0abded1d885f3"><td class="memItemLeft" align="right" valign="top">pthread_cond_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87c6d5157fa0f10d82e0abded1d885f3">buffer_full_cond</a></td></tr>
+<tr class="memdesc:a87c6d5157fa0f10d82e0abded1d885f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variável de condição usada para sinalizar ao consumidor que o buffer está cheio.  <br /></td></tr>
+<tr class="separator:a87c6d5157fa0f10d82e0abded1d885f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a436d59982386b19ceee4af143321b585" id="r_a436d59982386b19ceee4af143321b585"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a436d59982386b19ceee4af143321b585">active_producers</a> = <a class="el" href="#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a></td></tr>
+<tr class="memdesc:a436d59982386b19ceee4af143321b585"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contador para rastrear o número de threads produtoras que ainda estão em execução.  <br /></td></tr>
+<tr class="separator:a436d59982386b19ceee4af143321b585"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Descrição detalhada</h2>
+<div class="textblock"><p>Simulação do problema Produtor-Consumidor usando pthreads, semáforos e variáveis de condição. </p>
+<p>Este programa implementa uma solução para o problema clássico do produtor-consumidor. Ele simula um cenário com múltiplos "caixas" (produtores) que geram vendas (valores de ponto flutuante) e as colocam em um buffer circular compartilhado. Um único "gerente" (consumidor) aguarda até que o buffer esteja completamente cheio para então processar todas as vendas de uma vez, calculando o valor médio.</p>
+<p>A sincronização entre as threads é gerenciada da seguinte forma:</p><ul>
+<li><b>Mutex (<code>mutex</code>):</b> Garante o acesso exclusivo às seções críticas, protegendo o buffer e as variáveis compartilhadas (<code>count</code>, <code>in_idx</code>, <code>out_idx</code>, <code>active_producers</code>) contra condições de corrida.</li>
+<li><b>Semáforos (<code>empty_slots</code>, <code>full_slots</code>):</b> <code>empty_slots</code> controla o número de posições vazias no buffer, fazendo com que os produtores esperem se o buffer estiver cheio. <code>full_slots</code> foi mantido para ilustrar a solução clássica, embora o consumidor neste exemplo específico não espere por um único item.</li>
+<li><b>Variável de Condição (<code>buffer_full_cond</code>):</b> Permite que o consumidor (gerente) espere de forma eficiente sem consumir CPU (<code>pthread_cond_wait</code>) até que o buffer esteja cheio ou que todos os produtores tenham terminado seu trabalho. Os produtores sinalizam (<code>pthread_cond_signal</code>) quando o buffer enche, e um <code>broadcast</code> é usado no final para garantir que o consumidor acorde e termine. </li>
+</ul>
+
+<p class="definition">Definição no arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+</div><h2 class="groupheader">Definições e macros</h2>
+<a id="a6b20d41d6252e9871430c242cb1a56e7" name="a6b20d41d6252e9871430c242cb1a56e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b20d41d6252e9871430c242cb1a56e7">&#9670;&#160;</a></span>BUFFER_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BUFFER_SIZE&#160;&#160;&#160;5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Define a capacidade máxima do buffer compartilhado. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00034">34</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="a642ed9b3c92cf525bd21bc6b630e1eed" name="a642ed9b3c92cf525bd21bc6b630e1eed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a642ed9b3c92cf525bd21bc6b630e1eed">&#9670;&#160;</a></span>NUM_CONSUMERS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define NUM_CONSUMERS&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Define o número de threads consumidoras (gerentes) a serem criadas. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00046">46</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="a35219978a46af884c0f14963e979dbad" name="a35219978a46af884c0f14963e979dbad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35219978a46af884c0f14963e979dbad">&#9670;&#160;</a></span>NUM_PRODUCERS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define NUM_PRODUCERS&#160;&#160;&#160;3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Define o número de threads produtoras (caixas) a serem criadas. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00040">40</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Funções</h2>
+<a id="a6c0ce21bf6fb29cd5d2d0b367f315da1" name="a6c0ce21bf6fb29cd5d2d0b367f315da1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c0ce21bf6fb29cd5d2d0b367f315da1">&#9670;&#160;</a></span>consumer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * consumer </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Função executada pela thread consumidora (gerente). </p>
+<p>O consumidor entra em um loop infinito para processar as vendas. Ele bloqueia o mutex e aguarda na variável de condição (<code>pthread_cond_wait</code>) até que o buffer esteja cheio (<code>count == BUFFER_SIZE</code>) ou não haja mais produtores ativos (<code>active_producers == 0</code>). Quando acordado e a condição é satisfeita, ele processa <em>todos</em> os itens presentes no buffer, calculando a soma e a média. Em seguida, ele zera o contador de itens e libera os slots correspondentes no semáforo <code>empty_slots</code>. O loop termina quando não há mais produtores ativos e o buffer está vazio.</p>
+<dl class="params"><dt>Parâmetros</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">args</td><td>Não utilizado (NULL). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Retorna</dt><dd>NULL. </dd></dl>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00197">197</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+<div class="dynheader">
+Esse é o diagrama das funções que utilizam essa função:</div>
+<div class="dyncontent">
+<div class="center"><img src="prod-cons_8c_a6c0ce21bf6fb29cd5d2d0b367f315da1_icgraph.png" border="0" usemap="#aprod-cons_8c_a6c0ce21bf6fb29cd5d2d0b367f315da1_icgraph" alt=""/></div>
+<map name="aprod-cons_8c_a6c0ce21bf6fb29cd5d2d0b367f315da1_icgraph" id="aprod-cons_8c_a6c0ce21bf6fb29cd5d2d0b367f315da1_icgraph">
+<area shape="rect" title="Função executada pela thread consumidora (gerente)." alt="" coords="103,5,181,32"/>
+<area shape="rect" href="prod-cons_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="Ponto de entrada principal do programa." alt="" coords="5,5,55,32"/>
+<area shape="poly" title=" " alt="" coords="87,21,55,21,55,16,87,16"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="ae66f6b31b5ad750f1fe042a706a4e3d4" name="ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae66f6b31b5ad750f1fe042a706a4e3d4">&#9670;&#160;</a></span>main()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int main </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ponto de entrada principal do programa. </p>
+<p>Inicializa o gerador de números aleatórios, o mutex, a variável de condição e os semáforos. Cria o número especificado de threads produtoras e consumidoras, passando os argumentos necessários. Aguarda a conclusão de todas as threads produtoras e consumidoras usando <code>pthread_join</code>. Por fim, destrói os primitivos de sincronização (mutex, cond, semáforos) e exibe uma mensagem de conclusão.</p>
+<dl class="section return"><dt>Retorna</dt><dd>0 em caso de sucesso. </dd></dl>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00266">266</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+<div class="dynheader">
+Este é o diagrama das funções utilizadas por essa função:</div>
+<div class="dyncontent">
+<div class="center"><img src="prod-cons_8c_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph.png" border="0" usemap="#aprod-cons_8c_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph" alt=""/></div>
+<map name="aprod-cons_8c_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph" id="aprod-cons_8c_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph">
+<area shape="rect" title="Ponto de entrada principal do programa." alt="" coords="5,31,55,57"/>
+<area shape="rect" href="prod-cons_8c.html#a6c0ce21bf6fb29cd5d2d0b367f315da1" title="Função executada pela thread consumidora (gerente)." alt="" coords="103,5,181,32"/>
+<area shape="poly" title=" " alt="" coords="54,36,87,28,88,34,56,41"/>
+<area shape="rect" href="prod-cons_8c.html#a13f485a0cfd6e52c071bef0b7adb70cf" title="Função executada pelas threads produtoras (caixas)." alt="" coords="106,56,178,83"/>
+<area shape="poly" title=" " alt="" coords="56,47,91,55,90,60,54,52"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a13f485a0cfd6e52c071bef0b7adb70cf" name="a13f485a0cfd6e52c071bef0b7adb70cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13f485a0cfd6e52c071bef0b7adb70cf">&#9670;&#160;</a></span>producer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * producer </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Função executada pelas threads produtoras (caixas). </p>
+<p>Cada produtor gera um número pré-definido de vendas com valores aleatórios. Para cada venda, ele aguarda por um slot vazio no buffer (<code>sem_wait</code>), bloqueia o mutex, adiciona o valor da venda ao buffer, atualiza os contadores e o índice de entrada. Se o buffer ficar cheio após a inserção, ele sinaliza a variável de condição <code>buffer_full_cond</code> para acordar o gerente. Após produzir todas as suas vendas, decrementa o contador <code>active_producers</code> e, se for o último produtor a terminar, envia um <code>broadcast</code> na variável de condição para garantir que o consumidor processe os itens restantes e termine.</p>
+<dl class="params"><dt>Parâmetros</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">args</td><td>Um ponteiro para uma estrutura <code><a class="el" href="structproducer__args.html" title="Estrutura para encapsular os argumentos a serem passados para cada thread produtora.">producer_args</a></code> contendo o ID da thread e o número de vendas a produzir. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Retorna</dt><dd>NULL. </dd></dl>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00132">132</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+<div class="dynheader">
+Esse é o diagrama das funções que utilizam essa função:</div>
+<div class="dyncontent">
+<div class="center"><img src="prod-cons_8c_a13f485a0cfd6e52c071bef0b7adb70cf_icgraph.png" border="0" usemap="#aprod-cons_8c_a13f485a0cfd6e52c071bef0b7adb70cf_icgraph" alt=""/></div>
+<map name="aprod-cons_8c_a13f485a0cfd6e52c071bef0b7adb70cf_icgraph" id="aprod-cons_8c_a13f485a0cfd6e52c071bef0b7adb70cf_icgraph">
+<area shape="rect" title="Função executada pelas threads produtoras (caixas)." alt="" coords="103,5,174,32"/>
+<area shape="rect" href="prod-cons_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="Ponto de entrada principal do programa." alt="" coords="5,5,55,32"/>
+<area shape="poly" title=" " alt="" coords="87,21,55,21,55,16,87,16"/>
+</map>
+</div>
+
+</div>
+</div>
+<h2 class="groupheader">Variáveis</h2>
+<a id="a436d59982386b19ceee4af143321b585" name="a436d59982386b19ceee4af143321b585"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a436d59982386b19ceee4af143321b585">&#9670;&#160;</a></span>active_producers</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int active_producers = <a class="el" href="#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contador para rastrear o número de threads produtoras que ainda estão em execução. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00115">115</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="aa5b659cea6be80e6d304d4430d270ecd" name="aa5b659cea6be80e6d304d4430d270ecd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5b659cea6be80e6d304d4430d270ecd">&#9670;&#160;</a></span>buffer</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double buffer[<a class="el" href="#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Array de doubles que funciona como o buffer circular compartilhado para armazenar os valores das vendas. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00067">67</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="a87c6d5157fa0f10d82e0abded1d885f3" name="a87c6d5157fa0f10d82e0abded1d885f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87c6d5157fa0f10d82e0abded1d885f3">&#9670;&#160;</a></span>buffer_full_cond</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">pthread_cond_t buffer_full_cond</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Variável de condição usada para sinalizar ao consumidor que o buffer está cheio. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00109">109</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="ad43c3812e6d13e0518d9f8b8f463ffcf" name="ad43c3812e6d13e0518d9f8b8f463ffcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad43c3812e6d13e0518d9f8b8f463ffcf">&#9670;&#160;</a></span>count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int count = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contador que armazena o número atual de itens no buffer. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00073">73</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="ac4b4123acdd4ff1886c11fd9b0918f19" name="ac4b4123acdd4ff1886c11fd9b0918f19"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4b4123acdd4ff1886c11fd9b0918f19">&#9670;&#160;</a></span>empty_slots</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">sem_t empty_slots</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Semáforo que conta o número de posições vazias no buffer. Inicializado com BUFFER_SIZE. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00097">97</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="ab0f9446b575ad1c8a51548638b7af8e0" name="ab0f9446b575ad1c8a51548638b7af8e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0f9446b575ad1c8a51548638b7af8e0">&#9670;&#160;</a></span>full_slots</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">sem_t full_slots</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Semáforo que conta o número de posições preenchidas no buffer. Inicializado com 0. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00103">103</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="ab3926cfd7377a5ede3d3dc0a04986d13" name="ab3926cfd7377a5ede3d3dc0a04986d13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3926cfd7377a5ede3d3dc0a04986d13">&#9670;&#160;</a></span>in_idx</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int in_idx = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Índice onde o próximo produtor irá inserir um item no buffer. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00079">79</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="a4acff8232e4aec9cd5c6dc200ac55ef3" name="a4acff8232e4aec9cd5c6dc200ac55ef3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4acff8232e4aec9cd5c6dc200ac55ef3">&#9670;&#160;</a></span>mutex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">pthread_mutex_t mutex</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mutex para garantir o acesso atômico às variáveis compartilhadas e ao buffer. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00091">91</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+<a id="a7fadacd6eebc32b564c8d08c480b839c" name="a7fadacd6eebc32b564c8d08c480b839c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7fadacd6eebc32b564c8d08c480b839c">&#9670;&#160;</a></span>out_idx</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int out_idx = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Índice de onde o próximo consumidor irá remover um item do buffer. </p>
+
+<p class="definition">Definição na linha <a class="el" href="prod-cons_8c_source.html#l00085">85</a> do arquivo <a class="el" href="prod-cons_8c_source.html">prod-cons.c</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="prod-cons_8c.html">prod-cons.c</a></li>
+    <li class="footer">Gerado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,349 @@
+\doxysection{Referência do Arquivo prod-\/cons.c}
+\hypertarget{prod-cons_8c}{}\label{prod-cons_8c}\index{prod-\/cons.c@{prod-\/cons.c}}
+
+
+Simulação do problema Produtor-\/\+Consumidor usando pthreads, semáforos e variáveis de condição.  
+
+
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+{\ttfamily \#include $<$semaphore.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+Gráfico de dependência de inclusões para prod-\/cons.c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{prod-cons_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Estruturas de Dados}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structproducer__args}{producer\+\_\+args}}
+\begin{DoxyCompactList}\small\item\em Estrutura para encapsular os argumentos a serem passados para cada thread produtora. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Definições e Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{prod-cons_8c_a6b20d41d6252e9871430c242cb1a56e7}{BUFFER\+\_\+\+SIZE}}~5
+\begin{DoxyCompactList}\small\item\em Define a capacidade máxima do buffer compartilhado. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{prod-cons_8c_a35219978a46af884c0f14963e979dbad}{NUM\+\_\+\+PRODUCERS}}~3
+\begin{DoxyCompactList}\small\item\em Define o número de threads produtoras (caixas) a serem criadas. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{prod-cons_8c_a642ed9b3c92cf525bd21bc6b630e1eed}{NUM\+\_\+\+CONSUMERS}}~1
+\begin{DoxyCompactList}\small\item\em Define o número de threads consumidoras (gerentes) a serem criadas. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funções}
+\begin{DoxyCompactItemize}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{prod-cons_8c_a13f485a0cfd6e52c071bef0b7adb70cf}{producer}} (void \texorpdfstring{$\ast$}{*}args)
+\begin{DoxyCompactList}\small\item\em Função executada pelas threads produtoras (caixas). \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{prod-cons_8c_a6c0ce21bf6fb29cd5d2d0b367f315da1}{consumer}} (void \texorpdfstring{$\ast$}{*}args)
+\begin{DoxyCompactList}\small\item\em Função executada pela thread consumidora (gerente). \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{prod-cons_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\begin{DoxyCompactList}\small\item\em Ponto de entrada principal do programa. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variáveis}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{prod-cons_8c_aa5b659cea6be80e6d304d4430d270ecd}{buffer}} \mbox{[}\mbox{\hyperlink{prod-cons_8c_a6b20d41d6252e9871430c242cb1a56e7}{BUFFER\+\_\+\+SIZE}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array de doubles que funciona como o buffer circular compartilhado para armazenar os valores das vendas. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{prod-cons_8c_ad43c3812e6d13e0518d9f8b8f463ffcf}{count}} = 0
+\begin{DoxyCompactList}\small\item\em Contador que armazena o número atual de itens no buffer. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{prod-cons_8c_ab3926cfd7377a5ede3d3dc0a04986d13}{in\+\_\+idx}} = 0
+\begin{DoxyCompactList}\small\item\em Índice onde o próximo produtor irá inserir um item no buffer. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{prod-cons_8c_a7fadacd6eebc32b564c8d08c480b839c}{out\+\_\+idx}} = 0
+\begin{DoxyCompactList}\small\item\em Índice de onde o próximo consumidor irá remover um item do buffer. \end{DoxyCompactList}\item 
+pthread\+\_\+mutex\+\_\+t \mbox{\hyperlink{prod-cons_8c_a4acff8232e4aec9cd5c6dc200ac55ef3}{mutex}}
+\begin{DoxyCompactList}\small\item\em Mutex para garantir o acesso atômico às variáveis compartilhadas e ao buffer. \end{DoxyCompactList}\item 
+sem\+\_\+t \mbox{\hyperlink{prod-cons_8c_ac4b4123acdd4ff1886c11fd9b0918f19}{empty\+\_\+slots}}
+\begin{DoxyCompactList}\small\item\em Semáforo que conta o número de posições vazias no buffer. Inicializado com BUFFER\+\_\+\+SIZE. \end{DoxyCompactList}\item 
+sem\+\_\+t \mbox{\hyperlink{prod-cons_8c_ab0f9446b575ad1c8a51548638b7af8e0}{full\+\_\+slots}}
+\begin{DoxyCompactList}\small\item\em Semáforo que conta o número de posições preenchidas no buffer. Inicializado com 0. \end{DoxyCompactList}\item 
+pthread\+\_\+cond\+\_\+t \mbox{\hyperlink{prod-cons_8c_a87c6d5157fa0f10d82e0abded1d885f3}{buffer\+\_\+full\+\_\+cond}}
+\begin{DoxyCompactList}\small\item\em Variável de condição usada para sinalizar ao consumidor que o buffer está cheio. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{prod-cons_8c_a436d59982386b19ceee4af143321b585}{active\+\_\+producers}} = \mbox{\hyperlink{prod-cons_8c_a35219978a46af884c0f14963e979dbad}{NUM\+\_\+\+PRODUCERS}}
+\begin{DoxyCompactList}\small\item\em Contador para rastrear o número de threads produtoras que ainda estão em execução. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Descrição detalhada}
+Simulação do problema Produtor-\/\+Consumidor usando pthreads, semáforos e variáveis de condição. 
+
+Este programa implementa uma solução para o problema clássico do produtor-\/consumidor. Ele simula um cenário com múltiplos "{}caixas"{} (produtores) que geram vendas (valores de ponto flutuante) e as colocam em um buffer circular compartilhado. Um único "{}gerente"{} (consumidor) aguarda até que o buffer esteja completamente cheio para então processar todas as vendas de uma vez, calculando o valor médio.
+
+A sincronização entre as threads é gerenciada da seguinte forma\+:
+\begin{DoxyItemize}
+\item {\bfseries{Mutex ({\ttfamily mutex})\+:}} Garante o acesso exclusivo às seções críticas, protegendo o buffer e as variáveis compartilhadas ({\ttfamily count}, {\ttfamily in\+\_\+idx}, {\ttfamily out\+\_\+idx}, {\ttfamily active\+\_\+producers}) contra condições de corrida.
+\item {\bfseries{Semáforos ({\ttfamily empty\+\_\+slots}, {\ttfamily full\+\_\+slots})\+:}} {\ttfamily empty\+\_\+slots} controla o número de posições vazias no buffer, fazendo com que os produtores esperem se o buffer estiver cheio. {\ttfamily full\+\_\+slots} foi mantido para ilustrar a solução clássica, embora o consumidor neste exemplo específico não espere por um único item.
+\item {\bfseries{Variável de Condição ({\ttfamily buffer\+\_\+full\+\_\+cond})\+:}} Permite que o consumidor (gerente) espere de forma eficiente sem consumir CPU ({\ttfamily pthread\+\_\+cond\+\_\+wait}) até que o buffer esteja cheio ou que todos os produtores tenham terminado seu trabalho. Os produtores sinalizam ({\ttfamily pthread\+\_\+cond\+\_\+signal}) quando o buffer enche, e um {\ttfamily broadcast} é usado no final para garantir que o consumidor acorde e termine. 
+\end{DoxyItemize}
+
+Definição no arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+
+
+\doxysubsection{Definições e macros}
+\Hypertarget{prod-cons_8c_a6b20d41d6252e9871430c242cb1a56e7}\index{prod-\/cons.c@{prod-\/cons.c}!BUFFER\_SIZE@{BUFFER\_SIZE}}
+\index{BUFFER\_SIZE@{BUFFER\_SIZE}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{BUFFER\_SIZE}{BUFFER\_SIZE}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a6b20d41d6252e9871430c242cb1a56e7} 
+\#define BUFFER\+\_\+\+SIZE~5}
+
+
+
+Define a capacidade máxima do buffer compartilhado. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00034}{34}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_a642ed9b3c92cf525bd21bc6b630e1eed}\index{prod-\/cons.c@{prod-\/cons.c}!NUM\_CONSUMERS@{NUM\_CONSUMERS}}
+\index{NUM\_CONSUMERS@{NUM\_CONSUMERS}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{NUM\_CONSUMERS}{NUM\_CONSUMERS}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a642ed9b3c92cf525bd21bc6b630e1eed} 
+\#define NUM\+\_\+\+CONSUMERS~1}
+
+
+
+Define o número de threads consumidoras (gerentes) a serem criadas. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00046}{46}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_a35219978a46af884c0f14963e979dbad}\index{prod-\/cons.c@{prod-\/cons.c}!NUM\_PRODUCERS@{NUM\_PRODUCERS}}
+\index{NUM\_PRODUCERS@{NUM\_PRODUCERS}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{NUM\_PRODUCERS}{NUM\_PRODUCERS}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a35219978a46af884c0f14963e979dbad} 
+\#define NUM\+\_\+\+PRODUCERS~3}
+
+
+
+Define o número de threads produtoras (caixas) a serem criadas. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00040}{40}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+
+
+\doxysubsection{Funções}
+\Hypertarget{prod-cons_8c_a6c0ce21bf6fb29cd5d2d0b367f315da1}\index{prod-\/cons.c@{prod-\/cons.c}!consumer@{consumer}}
+\index{consumer@{consumer}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{consumer()}{consumer()}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a6c0ce21bf6fb29cd5d2d0b367f315da1} 
+void \texorpdfstring{$\ast$}{*} consumer (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{args}{}\end{DoxyParamCaption})}
+
+
+
+Função executada pela thread consumidora (gerente). 
+
+O consumidor entra em um loop infinito para processar as vendas. Ele bloqueia o mutex e aguarda na variável de condição ({\ttfamily pthread\+\_\+cond\+\_\+wait}) até que o buffer esteja cheio ({\ttfamily count == BUFFER\+\_\+\+SIZE}) ou não haja mais produtores ativos ({\ttfamily active\+\_\+producers == 0}). Quando acordado e a condição é satisfeita, ele processa {\itshape todos} os itens presentes no buffer, calculando a soma e a média. Em seguida, ele zera o contador de itens e libera os slots correspondentes no semáforo {\ttfamily empty\+\_\+slots}. O loop termina quando não há mais produtores ativos e o buffer está vazio.
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em args} & Não utilizado (NULL). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+NULL. 
+\end{DoxyReturn}
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00197}{197}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+Esse é o diagrama das funções que utilizam essa função\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{prod-cons_8c_a6c0ce21bf6fb29cd5d2d0b367f315da1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{prod-cons_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\index{prod-\/cons.c@{prod-\/cons.c}!main@{main}}
+\index{main@{main}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{prod-cons_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Ponto de entrada principal do programa. 
+
+Inicializa o gerador de números aleatórios, o mutex, a variável de condição e os semáforos. Cria o número especificado de threads produtoras e consumidoras, passando os argumentos necessários. Aguarda a conclusão de todas as threads produtoras e consumidoras usando {\ttfamily pthread\+\_\+join}. Por fim, destrói os primitivos de sincronização (mutex, cond, semáforos) e exibe uma mensagem de conclusão.
+
+\begin{DoxyReturn}{Retorna}
+0 em caso de sucesso. 
+\end{DoxyReturn}
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00266}{266}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+Este é o diagrama das funções utilizadas por essa função\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{prod-cons_8c_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{prod-cons_8c_a13f485a0cfd6e52c071bef0b7adb70cf}\index{prod-\/cons.c@{prod-\/cons.c}!producer@{producer}}
+\index{producer@{producer}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{producer()}{producer()}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a13f485a0cfd6e52c071bef0b7adb70cf} 
+void \texorpdfstring{$\ast$}{*} producer (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{args}{}\end{DoxyParamCaption})}
+
+
+
+Função executada pelas threads produtoras (caixas). 
+
+Cada produtor gera um número pré-\/definido de vendas com valores aleatórios. Para cada venda, ele aguarda por um slot vazio no buffer ({\ttfamily sem\+\_\+wait}), bloqueia o mutex, adiciona o valor da venda ao buffer, atualiza os contadores e o índice de entrada. Se o buffer ficar cheio após a inserção, ele sinaliza a variável de condição {\ttfamily buffer\+\_\+full\+\_\+cond} para acordar o gerente. Após produzir todas as suas vendas, decrementa o contador {\ttfamily active\+\_\+producers} e, se for o último produtor a terminar, envia um {\ttfamily broadcast} na variável de condição para garantir que o consumidor processe os itens restantes e termine.
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em args} & Um ponteiro para uma estrutura {\ttfamily \doxylink{structproducer__args}{producer\+\_\+args}} contendo o ID da thread e o número de vendas a produzir. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+NULL. 
+\end{DoxyReturn}
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00132}{132}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+Esse é o diagrama das funções que utilizam essa função\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=207pt]{prod-cons_8c_a13f485a0cfd6e52c071bef0b7adb70cf_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Variáveis}
+\Hypertarget{prod-cons_8c_a436d59982386b19ceee4af143321b585}\index{prod-\/cons.c@{prod-\/cons.c}!active\_producers@{active\_producers}}
+\index{active\_producers@{active\_producers}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{active\_producers}{active\_producers}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a436d59982386b19ceee4af143321b585} 
+int active\+\_\+producers = \mbox{\hyperlink{prod-cons_8c_a35219978a46af884c0f14963e979dbad}{NUM\+\_\+\+PRODUCERS}}}
+
+
+
+Contador para rastrear o número de threads produtoras que ainda estão em execução. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00115}{115}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_aa5b659cea6be80e6d304d4430d270ecd}\index{prod-\/cons.c@{prod-\/cons.c}!buffer@{buffer}}
+\index{buffer@{buffer}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{buffer}{buffer}}
+{\footnotesize\ttfamily \label{prod-cons_8c_aa5b659cea6be80e6d304d4430d270ecd} 
+double buffer\mbox{[}\mbox{\hyperlink{prod-cons_8c_a6b20d41d6252e9871430c242cb1a56e7}{BUFFER\+\_\+\+SIZE}}\mbox{]}}
+
+
+
+Array de doubles que funciona como o buffer circular compartilhado para armazenar os valores das vendas. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00067}{67}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_a87c6d5157fa0f10d82e0abded1d885f3}\index{prod-\/cons.c@{prod-\/cons.c}!buffer\_full\_cond@{buffer\_full\_cond}}
+\index{buffer\_full\_cond@{buffer\_full\_cond}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{buffer\_full\_cond}{buffer\_full\_cond}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a87c6d5157fa0f10d82e0abded1d885f3} 
+pthread\+\_\+cond\+\_\+t buffer\+\_\+full\+\_\+cond}
+
+
+
+Variável de condição usada para sinalizar ao consumidor que o buffer está cheio. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00109}{109}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_ad43c3812e6d13e0518d9f8b8f463ffcf}\index{prod-\/cons.c@{prod-\/cons.c}!count@{count}}
+\index{count@{count}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{count}{count}}
+{\footnotesize\ttfamily \label{prod-cons_8c_ad43c3812e6d13e0518d9f8b8f463ffcf} 
+int count = 0}
+
+
+
+Contador que armazena o número atual de itens no buffer. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00073}{73}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_ac4b4123acdd4ff1886c11fd9b0918f19}\index{prod-\/cons.c@{prod-\/cons.c}!empty\_slots@{empty\_slots}}
+\index{empty\_slots@{empty\_slots}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{empty\_slots}{empty\_slots}}
+{\footnotesize\ttfamily \label{prod-cons_8c_ac4b4123acdd4ff1886c11fd9b0918f19} 
+sem\+\_\+t empty\+\_\+slots}
+
+
+
+Semáforo que conta o número de posições vazias no buffer. Inicializado com BUFFER\+\_\+\+SIZE. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00097}{97}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_ab0f9446b575ad1c8a51548638b7af8e0}\index{prod-\/cons.c@{prod-\/cons.c}!full\_slots@{full\_slots}}
+\index{full\_slots@{full\_slots}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{full\_slots}{full\_slots}}
+{\footnotesize\ttfamily \label{prod-cons_8c_ab0f9446b575ad1c8a51548638b7af8e0} 
+sem\+\_\+t full\+\_\+slots}
+
+
+
+Semáforo que conta o número de posições preenchidas no buffer. Inicializado com 0. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00103}{103}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_ab3926cfd7377a5ede3d3dc0a04986d13}\index{prod-\/cons.c@{prod-\/cons.c}!in\_idx@{in\_idx}}
+\index{in\_idx@{in\_idx}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{in\_idx}{in\_idx}}
+{\footnotesize\ttfamily \label{prod-cons_8c_ab3926cfd7377a5ede3d3dc0a04986d13} 
+int in\+\_\+idx = 0}
+
+
+
+Índice onde o próximo produtor irá inserir um item no buffer. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00079}{79}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_a4acff8232e4aec9cd5c6dc200ac55ef3}\index{prod-\/cons.c@{prod-\/cons.c}!mutex@{mutex}}
+\index{mutex@{mutex}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{mutex}{mutex}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a4acff8232e4aec9cd5c6dc200ac55ef3} 
+pthread\+\_\+mutex\+\_\+t mutex}
+
+
+
+Mutex para garantir o acesso atômico às variáveis compartilhadas e ao buffer. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00091}{91}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+
+\Hypertarget{prod-cons_8c_a7fadacd6eebc32b564c8d08c480b839c}\index{prod-\/cons.c@{prod-\/cons.c}!out\_idx@{out\_idx}}
+\index{out\_idx@{out\_idx}!prod-\/cons.c@{prod-\/cons.c}}
+\doxysubsubsection{\texorpdfstring{out\_idx}{out\_idx}}
+{\footnotesize\ttfamily \label{prod-cons_8c_a7fadacd6eebc32b564c8d08c480b839c} 
+int out\+\_\+idx = 0}
+
+
+
+Índice de onde o próximo consumidor irá remover um item do buffer. 
+
+
+
+Definição na linha \mbox{\hyperlink{prod-cons_8c_source_l00085}{85}} do arquivo \mbox{\hyperlink{prod-cons_8c_source}{prod-\/cons.\+c}}.
+

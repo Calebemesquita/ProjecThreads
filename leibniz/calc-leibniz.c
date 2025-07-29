@@ -93,4 +93,5 @@ int main (){
     printf("Tempo total de execução: %.2fs\n", total_final_time);
 
     return EXIT_SUCCESS;
+    // teste
 }

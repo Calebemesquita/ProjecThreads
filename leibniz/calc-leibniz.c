@@ -5,14 +5,14 @@
 #include <time.h>
 
 #define SIZE 2000000000
-#define NUM_THREADS 16
+#define NUM_THREADS 2
 #define PARTIAL_NUM_TERMS (( SIZE ) /( NUM_THREADS ) )
 
 #define _POSIX_C_SOURCE 199309L
 
 #define CLOCK_MONOTONIC 1
 
-unsigned long long result = 0;
+long double result = 0;
 pthread_mutex_t mutex;
 
 double calcular_tempo(){
@@ -26,7 +26,7 @@ long double partialFormula(int start_term) {
     
     const int num_terms = start_term + PARTIAL_NUM_TERMS ;
 
-    double pi_approximation = 0;
+    long double pi_approximation = 0;
     double signal = 1.0;
     
     for ( int k = start_term ; k < num_terms ; k ++) {

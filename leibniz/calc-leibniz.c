@@ -2,75 +2,95 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <time.h>
 
-#define NUM_THREADS 2
-#define SIZE 10000000
+#define SIZE 2000000000
+#define NUM_THREADS 16
+#define PARTIAL_NUM_TERMS (( SIZE ) /( NUM_THREADS ) )
 
-int array[SIZE];
+#define _POSIX_C_SOURCE 199309L
 
-unsigned long result = 0;
+#define CLOCK_MONOTONIC 1
 
+unsigned long long result = 0;
 pthread_mutex_t mutex;
 
-
-void * calcular(void *args){
-    unsigned long first = * ((unsigned long*) args);
-
-    unsigned long acc = 0;
-    for(unsigned long i = first; i < SIZE; i += NUM_THREADS) {
-        acc += array[i];
-    }
-
-    pthread_mutex_lock(&mutex);
-    result += acc;
-    pthread_mutex_unlock(&mutex);
+double calcular_tempo(){
+    struct timespec time;
+    clock_gettime(CLOCK_MONOTONIC, &time); // errado
+    return (double)time.tv_sec + (double)time.tv_nsec / 1e9;    
 }
 
+// se der pal dps tentar com void * e comversao de tipos pode erro de compilaçao
+long double partialFormula(int start_term) {
+    
+    const int num_terms = start_term + PARTIAL_NUM_TERMS ;
 
+    double pi_approximation = 0;
+    double signal = 1.0;
+    
+    for ( int k = start_term ; k < num_terms ; k ++) {
+        pi_approximation += signal /(2* k + 1) ;
+        signal *= -1.0;
+    } 
+    
+    return pi_approximation;
+}
 
+void * partialProcessing ( void * args ) {
+    pthread_t tid = pthread_self();
+    int first_therm = *(( int *) args );
+    free(args);
+    
+    double initial_time = calcular_tempo(); // comeca a contar o tempo de inicio
+    long double sum = partialFormula ( (int) first_therm ); // faz o calculo dos valores referentes a essa thread
+    double end_time = calcular_tempo(); // comeca a contar o tempo de fim
+    double final_time = end_time - initial_time; // calcula p tempo final 
+    
+    pthread_mutex_lock(&mutex);
+    result += 4 * sum;
+    pthread_mutex_unlock(&mutex);
+    
+    printf("TID: %lu : %.2fs\n", (unsigned long) tid, final_time); // mostrar TID e tempo empregado na thread
+
+    return NULL;
+}
 
 int main (){
 
-
-    for(int i = 0; i < SIZE; i++){
-        array[i] = i;
-    }
-    
     // criar um mutex
     pthread_mutex_init(&mutex, NULL);
-
     // criar as threads
     pthread_t thread[NUM_THREADS];
     unsigned long args[NUM_THREADS];
 
-    struct timeval inicio;
-    gettimeofday(&inicio, NULL);
+    // dividir o tamanho total pelo número de threads
+    long long remainder = SIZE % NUM_THREADS;
 
-    for(int i = 0; i < NUM_THREADS; ++i) {
-        
-        args[i] = i * (SIZE / NUM_THREADS);
 
-        pthread_create(&thread[i], NULL, &calcular, (void *) &args[i] );
+    // começamos a calcular o tempo de inicio do procesamento 
+    printf("Começando a calcular o valor de pi da série de Leibniz, com %d threads\n", NUM_THREADS);
+    double total_start_time = calcular_tempo();
+
+    for(int i = 0; i < NUM_THREADS; ++i) { // apartir daqi tem algo errado
+        int *init = malloc(sizeof(int));
+        *init = i * (PARTIAL_NUM_TERMS);
+
+        pthread_create(&thread[i], NULL, partialProcessing, (void *)init);
     }
-
-
+    
     for(int i = 0; i < NUM_THREADS; ++i) {
         pthread_join(thread[i], NULL);
     }
 
-    struct timeval final;
-    gettimeofday(&final, NULL);
+    double total_time_end = calcular_tempo();
+    double total_final_time = total_time_end - total_start_time;
 
     /* Liberar o mutex */
     pthread_mutex_destroy(&mutex);
 
-    double time = (final.tv_sec - inicio.tv_sec) + (final.tv_usec - inicio.tv_usec)/1000000.0;
-
-    printf("Resultado = %u | Tempo %lf segundos\n", result, time);
+    printf("\nValor aproximado de pi: %.15Lf\n", result);
+    printf("Tempo total de execução: %.2fs\n", total_final_time);
 
     return EXIT_SUCCESS;
-
-
-
-
 }

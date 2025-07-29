@@ -1,0 +1,340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-BR">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.13.2"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Produto-Consumidor: Código-Fonte de prod-cons.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+  $(function() { init_search(); });
+/* @license-end */
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">Produto-Consumidor<span id="projectnumber">&#160;1.0.0</span>
+   </div>
+   <div id="projectbrief">Simulação do problema Produtor-Consumidor usando pthreads, semáforos e variáveis de condição.</div>
+  </td>
+    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect"                onmouseover="return searchBox.OnSearchSelectShow()"                onmouseout="return searchBox.OnSearchSelectHide()">&#160;</span>
+          <input type="text" id="MSearchField" value="" placeholder="Busca" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.svg" alt=""/></a>
+          </span>
+        </div>
+</td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Gerado por Doxygen 1.13.2 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() { codefold.init(0); });
+/* @license-end */
+</script>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function(){initNavTree('prod-cons_8c_source.html',''); initResizable(true); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Carregando...</div>
+<div class="SRStatus" id="Searching">Procurando...</div>
+<div class="SRStatus" id="NoMatches">Nenhuma entrada encontrado</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">prod-cons.c</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="prod-cons_8c.html">Ir para a documentação desse arquivo.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;pthread.h&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;semaphore.h&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;unistd.h&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;time.h&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">   34</a></span><span class="preprocessor">#define BUFFER_SIZE 5</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a35219978a46af884c0f14963e979dbad">   40</a></span><span class="preprocessor">#define NUM_PRODUCERS 3</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a642ed9b3c92cf525bd21bc6b630e1eed">   46</a></span><span class="preprocessor">#define NUM_CONSUMERS 1</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span></div>
+<div class="foldopen" id="foldopen00057" data-start="{" data-end="};">
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="structproducer__args.html">   57</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>{</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structproducer__args.html#ab488bfc5d1f76143651f915915046354">   59</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structproducer__args.html#ab488bfc5d1f76143651f915915046354">thread_id</a>;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="structproducer__args.html#ade4eec1ec53e96b62203ac10a9126465">   60</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structproducer__args.html#ade4eec1ec53e96b62203ac10a9126465">num_sales</a>;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>} <a class="code hl_struct" href="structproducer__args.html">producer_args</a>;</div>
+</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#aa5b659cea6be80e6d304d4430d270ecd">   67</a></span><span class="keywordtype">double</span> <a class="code hl_variable" href="prod-cons_8c.html#aa5b659cea6be80e6d304d4430d270ecd">buffer</a>[<a class="code hl_define" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>];</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">   73</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a> = 0;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#ab3926cfd7377a5ede3d3dc0a04986d13">   79</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="prod-cons_8c.html#ab3926cfd7377a5ede3d3dc0a04986d13">in_idx</a> = 0;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a7fadacd6eebc32b564c8d08c480b839c">   85</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="prod-cons_8c.html#a7fadacd6eebc32b564c8d08c480b839c">out_idx</a> = 0;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">   91</a></span>pthread_mutex_t <a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#ac4b4123acdd4ff1886c11fd9b0918f19">   97</a></span>sem_t <a class="code hl_variable" href="prod-cons_8c.html#ac4b4123acdd4ff1886c11fd9b0918f19">empty_slots</a>;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span></div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#ab0f9446b575ad1c8a51548638b7af8e0">  103</a></span>sem_t <a class="code hl_variable" href="prod-cons_8c.html#ab0f9446b575ad1c8a51548638b7af8e0">full_slots</a>;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span></div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a87c6d5157fa0f10d82e0abded1d885f3">  109</a></span>pthread_cond_t <a class="code hl_variable" href="prod-cons_8c.html#a87c6d5157fa0f10d82e0abded1d885f3">buffer_full_cond</a>;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a436d59982386b19ceee4af143321b585">  115</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="prod-cons_8c.html#a436d59982386b19ceee4af143321b585">active_producers</a> = <a class="code hl_define" href="prod-cons_8c.html#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a>;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span></div>
+<div class="foldopen" id="foldopen00132" data-start="{" data-end="}">
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a13f485a0cfd6e52c071bef0b7adb70cf">  132</a></span><span class="keywordtype">void</span> *<a class="code hl_function" href="prod-cons_8c.html#a13f485a0cfd6e52c071bef0b7adb70cf">producer</a>(<span class="keywordtype">void</span> *args)</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>{</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    <a class="code hl_struct" href="structproducer__args.html">producer_args</a> *p_args = (<a class="code hl_struct" href="structproducer__args.html">producer_args</a> *)args;</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    <span class="keywordtype">int</span> tid = p_args-&gt;<a class="code hl_variable" href="structproducer__args.html#ab488bfc5d1f76143651f915915046354">thread_id</a>;</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    <span class="keywordtype">int</span> sales_to_produce = p_args-&gt;<a class="code hl_variable" href="structproducer__args.html#ade4eec1ec53e96b62203ac10a9126465">num_sales</a>;</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span> </div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; sales_to_produce; i++)</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    {</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        <span class="keywordtype">double</span> sale_value = (rand() % 100000) / 100.0 + 1.0; <span class="comment">// Gera um valor de venda aleatório entre 1.00 e 1000.00</span></div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        sem_wait(&amp;<a class="code hl_variable" href="prod-cons_8c.html#ac4b4123acdd4ff1886c11fd9b0918f19">empty_slots</a>);</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        pthread_mutex_lock(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        <a class="code hl_variable" href="prod-cons_8c.html#aa5b659cea6be80e6d304d4430d270ecd">buffer</a>[<a class="code hl_variable" href="prod-cons_8c.html#ab3926cfd7377a5ede3d3dc0a04986d13">in_idx</a>] = sale_value;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>        <a class="code hl_variable" href="prod-cons_8c.html#ab3926cfd7377a5ede3d3dc0a04986d13">in_idx</a> = (<a class="code hl_variable" href="prod-cons_8c.html#ab3926cfd7377a5ede3d3dc0a04986d13">in_idx</a> + 1) % <a class="code hl_define" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        <a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a>++;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        printf(<span class="stringliteral">&quot;(P) TID %ld | Caixa %d | VENDA: R$ %.2f | ITERAÇÃO: %d/%d | Buffer: %d/%d\n&quot;</span>,</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>               pthread_self(), tid, sale_value, i + 1, sales_to_produce, <a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a>, <a class="code hl_define" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>);</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span> </div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a> == <a class="code hl_define" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>)</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        {</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            printf(<span class="stringliteral">&quot;--- BUFFER CHEIO! Notificando o gerente. ---\n&quot;</span>);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            pthread_cond_signal(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a87c6d5157fa0f10d82e0abded1d885f3">buffer_full_cond</a>);</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        }</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        pthread_mutex_unlock(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        sem_post(&amp;<a class="code hl_variable" href="prod-cons_8c.html#ab0f9446b575ad1c8a51548638b7af8e0">full_slots</a>);</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        sleep((rand() % 5) + 1);</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    }</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    pthread_mutex_lock(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    <a class="code hl_variable" href="prod-cons_8c.html#a436d59982386b19ceee4af143321b585">active_producers</a>--;</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    printf(<span class="stringliteral">&quot;(P) TID %ld | Caixa %d finalizou sua produção. Produtores ativos: %d\n&quot;</span>,</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>           pthread_self(), tid, <a class="code hl_variable" href="prod-cons_8c.html#a436d59982386b19ceee4af143321b585">active_producers</a>);</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="prod-cons_8c.html#a436d59982386b19ceee4af143321b585">active_producers</a> == 0)</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    {</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        pthread_cond_broadcast(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a87c6d5157fa0f10d82e0abded1d885f3">buffer_full_cond</a>);</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    }</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    pthread_mutex_unlock(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    free(p_args);</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    pthread_exit(NULL);</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>}</div>
+</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span></div>
+<div class="foldopen" id="foldopen00197" data-start="{" data-end="}">
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#a6c0ce21bf6fb29cd5d2d0b367f315da1">  197</a></span><span class="keywordtype">void</span> *<a class="code hl_function" href="prod-cons_8c.html#a6c0ce21bf6fb29cd5d2d0b367f315da1">consumer</a>(<span class="keywordtype">void</span> *args)</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>{</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    <span class="keywordtype">int</span> iteration = 1;</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <span class="keywordflow">while</span> (1)</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    {</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        pthread_mutex_lock(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        <span class="keywordflow">while</span> (<a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count &lt; BUFFER_SIZE &amp;&amp; active_producers &gt;</a> 0)</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>            printf(<span class="stringliteral">&quot;(C) TID %ld | Gerente esperando o buffer encher (Atual: %d/%d)...\n&quot;</span>,</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                   pthread_self(), <a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a>, <a class="code hl_define" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>);</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            pthread_cond_wait(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a87c6d5157fa0f10d82e0abded1d885f3">buffer_full_cond</a>, &amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        }</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="prod-cons_8c.html#a436d59982386b19ceee4af143321b585">active_producers</a> == 0 &amp;&amp; <a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a> == 0)</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        {</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            pthread_mutex_unlock(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        }</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a> &gt; 0)</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>        {</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>            printf(<span class="stringliteral">&quot;(C) TID %ld | Gerente iniciando processamento de %d vendas. ITERAÇÃO: %d\n&quot;</span>,</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                   pthread_self(), <a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a>, iteration);</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            <span class="keywordtype">double</span> total_sum = 0.0;</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>            <span class="keywordtype">int</span> items_consumed = <a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a>;</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; items_consumed; i++)</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            {</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                <span class="keywordtype">double</span> sale_value = <a class="code hl_variable" href="prod-cons_8c.html#aa5b659cea6be80e6d304d4430d270ecd">buffer</a>[<a class="code hl_variable" href="prod-cons_8c.html#a7fadacd6eebc32b564c8d08c480b839c">out_idx</a>];</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                total_sum += sale_value;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                <a class="code hl_variable" href="prod-cons_8c.html#a7fadacd6eebc32b564c8d08c480b839c">out_idx</a> = (<a class="code hl_variable" href="prod-cons_8c.html#a7fadacd6eebc32b564c8d08c480b839c">out_idx</a> + 1) % <a class="code hl_define" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>;</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>            }</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            <a class="code hl_variable" href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a> = 0;</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>            <span class="keywordtype">double</span> average = total_sum / items_consumed;</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            printf(<span class="stringliteral">&quot;(C) TID %ld | MÉDIA das %d vendas: R$ %.2f | ITERAÇÃO: %d\n&quot;</span>,</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                   pthread_self(), items_consumed, average, iteration++);</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            pthread_mutex_unlock(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; items_consumed; i++)</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            {</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                sem_post(&amp;<a class="code hl_variable" href="prod-cons_8c.html#ac4b4123acdd4ff1886c11fd9b0918f19">empty_slots</a>);</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>            }</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        }</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        {</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>            pthread_mutex_unlock(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        }</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    }</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    printf(<span class="stringliteral">&quot;(C) TID %ld | Gerente finalizou. Não há mais produtores nem vendas a processar.\n&quot;</span>, pthread_self());</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    pthread_exit(NULL);</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>}</div>
+</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span></div>
+<div class="foldopen" id="foldopen00266" data-start="{" data-end="}">
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno"><a class="line" href="prod-cons_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4">  266</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="prod-cons_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a>()</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>{</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    pthread_t producers[<a class="code hl_define" href="prod-cons_8c.html#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a>];</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    pthread_t consumers[<a class="code hl_define" href="prod-cons_8c.html#a642ed9b3c92cf525bd21bc6b630e1eed">NUM_CONSUMERS</a>];</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    srand(time(NULL));</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>    pthread_mutex_init(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>, NULL);</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>    pthread_cond_init(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a87c6d5157fa0f10d82e0abded1d885f3">buffer_full_cond</a>, NULL);</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    sem_init(&amp;<a class="code hl_variable" href="prod-cons_8c.html#ac4b4123acdd4ff1886c11fd9b0918f19">empty_slots</a>, 0, <a class="code hl_define" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>);</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>    sem_init(&amp;<a class="code hl_variable" href="prod-cons_8c.html#ab0f9446b575ad1c8a51548638b7af8e0">full_slots</a>, 0, 0);</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    printf(<span class="stringliteral">&quot;--- Iniciando Simulação de Gerenciamento de Caixas ---\n&quot;</span>);</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    printf(<span class="stringliteral">&quot;Configuração: %d Produtores (Caixas), %d Consumidor (Gerente), Tamanho do Buffer: %d\n\n&quot;</span>,</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>           <a class="code hl_define" href="prod-cons_8c.html#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a>, <a class="code hl_define" href="prod-cons_8c.html#a642ed9b3c92cf525bd21bc6b630e1eed">NUM_CONSUMERS</a>, <a class="code hl_define" href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a>);</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; <a class="code hl_define" href="prod-cons_8c.html#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a>; i++)</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    {</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        <a class="code hl_struct" href="structproducer__args.html">producer_args</a> *args = malloc(<span class="keyword">sizeof</span>(<a class="code hl_struct" href="structproducer__args.html">producer_args</a>));</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        args-&gt;<a class="code hl_variable" href="structproducer__args.html#ab488bfc5d1f76143651f915915046354">thread_id</a> = i + 1;</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        args-&gt;<a class="code hl_variable" href="structproducer__args.html#ade4eec1ec53e96b62203ac10a9126465">num_sales</a> = (rand() % 11) + 20; <span class="comment">// Cada produtor fará entre 20 e 30 vendas</span></div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        pthread_create(&amp;producers[i], NULL, <a class="code hl_function" href="prod-cons_8c.html#a13f485a0cfd6e52c071bef0b7adb70cf">producer</a>, (<span class="keywordtype">void</span> *)args);</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    }</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span> </div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; <a class="code hl_define" href="prod-cons_8c.html#a642ed9b3c92cf525bd21bc6b630e1eed">NUM_CONSUMERS</a>; i++)</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    {</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        pthread_create(&amp;consumers[i], NULL, <a class="code hl_function" href="prod-cons_8c.html#a6c0ce21bf6fb29cd5d2d0b367f315da1">consumer</a>, NULL);</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>    }</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; <a class="code hl_define" href="prod-cons_8c.html#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a>; i++)</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>    {</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        pthread_join(producers[i], NULL);</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>    }</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; <a class="code hl_define" href="prod-cons_8c.html#a642ed9b3c92cf525bd21bc6b630e1eed">NUM_CONSUMERS</a>; i++)</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    {</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>        pthread_join(consumers[i], NULL);</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    }</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>    pthread_mutex_destroy(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a>);</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>    pthread_cond_destroy(&amp;<a class="code hl_variable" href="prod-cons_8c.html#a87c6d5157fa0f10d82e0abded1d885f3">buffer_full_cond</a>);</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>    sem_destroy(&amp;<a class="code hl_variable" href="prod-cons_8c.html#ac4b4123acdd4ff1886c11fd9b0918f19">empty_slots</a>);</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    sem_destroy(&amp;<a class="code hl_variable" href="prod-cons_8c.html#ab0f9446b575ad1c8a51548638b7af8e0">full_slots</a>);</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    printf(<span class="stringliteral">&quot;\n--- Simulação Concluída ---\n&quot;</span>);</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span> </div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>}</div>
+</div>
+<div class="ttc" id="aprod-cons_8c_html_a13f485a0cfd6e52c071bef0b7adb70cf"><div class="ttname"><a href="prod-cons_8c.html#a13f485a0cfd6e52c071bef0b7adb70cf">producer</a></div><div class="ttdeci">void * producer(void *args)</div><div class="ttdoc">Função executada pelas threads produtoras (caixas).</div><div class="ttdef"><b>Definição</b> <a href="#l00132">prod-cons.c:132</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_a35219978a46af884c0f14963e979dbad"><div class="ttname"><a href="prod-cons_8c.html#a35219978a46af884c0f14963e979dbad">NUM_PRODUCERS</a></div><div class="ttdeci">#define NUM_PRODUCERS</div><div class="ttdoc">Define o número de threads produtoras (caixas) a serem criadas.</div><div class="ttdef"><b>Definição</b> <a href="#l00040">prod-cons.c:40</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_a436d59982386b19ceee4af143321b585"><div class="ttname"><a href="prod-cons_8c.html#a436d59982386b19ceee4af143321b585">active_producers</a></div><div class="ttdeci">int active_producers</div><div class="ttdoc">Contador para rastrear o número de threads produtoras que ainda estão em execução.</div><div class="ttdef"><b>Definição</b> <a href="#l00115">prod-cons.c:115</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_a4acff8232e4aec9cd5c6dc200ac55ef3"><div class="ttname"><a href="prod-cons_8c.html#a4acff8232e4aec9cd5c6dc200ac55ef3">mutex</a></div><div class="ttdeci">pthread_mutex_t mutex</div><div class="ttdoc">Mutex para garantir o acesso atômico às variáveis compartilhadas e ao buffer.</div><div class="ttdef"><b>Definição</b> <a href="#l00091">prod-cons.c:91</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_a642ed9b3c92cf525bd21bc6b630e1eed"><div class="ttname"><a href="prod-cons_8c.html#a642ed9b3c92cf525bd21bc6b630e1eed">NUM_CONSUMERS</a></div><div class="ttdeci">#define NUM_CONSUMERS</div><div class="ttdoc">Define o número de threads consumidoras (gerentes) a serem criadas.</div><div class="ttdef"><b>Definição</b> <a href="#l00046">prod-cons.c:46</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_a6b20d41d6252e9871430c242cb1a56e7"><div class="ttname"><a href="prod-cons_8c.html#a6b20d41d6252e9871430c242cb1a56e7">BUFFER_SIZE</a></div><div class="ttdeci">#define BUFFER_SIZE</div><div class="ttdoc">Define a capacidade máxima do buffer compartilhado.</div><div class="ttdef"><b>Definição</b> <a href="#l00034">prod-cons.c:34</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_a6c0ce21bf6fb29cd5d2d0b367f315da1"><div class="ttname"><a href="prod-cons_8c.html#a6c0ce21bf6fb29cd5d2d0b367f315da1">consumer</a></div><div class="ttdeci">void * consumer(void *args)</div><div class="ttdoc">Função executada pela thread consumidora (gerente).</div><div class="ttdef"><b>Definição</b> <a href="#l00197">prod-cons.c:197</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_a7fadacd6eebc32b564c8d08c480b839c"><div class="ttname"><a href="prod-cons_8c.html#a7fadacd6eebc32b564c8d08c480b839c">out_idx</a></div><div class="ttdeci">int out_idx</div><div class="ttdoc">Índice de onde o próximo consumidor irá remover um item do buffer.</div><div class="ttdef"><b>Definição</b> <a href="#l00085">prod-cons.c:85</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_a87c6d5157fa0f10d82e0abded1d885f3"><div class="ttname"><a href="prod-cons_8c.html#a87c6d5157fa0f10d82e0abded1d885f3">buffer_full_cond</a></div><div class="ttdeci">pthread_cond_t buffer_full_cond</div><div class="ttdoc">Variável de condição usada para sinalizar ao consumidor que o buffer está cheio.</div><div class="ttdef"><b>Definição</b> <a href="#l00109">prod-cons.c:109</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_aa5b659cea6be80e6d304d4430d270ecd"><div class="ttname"><a href="prod-cons_8c.html#aa5b659cea6be80e6d304d4430d270ecd">buffer</a></div><div class="ttdeci">double buffer[BUFFER_SIZE]</div><div class="ttdoc">Array de doubles que funciona como o buffer circular compartilhado para armazenar os valores das vend...</div><div class="ttdef"><b>Definição</b> <a href="#l00067">prod-cons.c:67</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_ab0f9446b575ad1c8a51548638b7af8e0"><div class="ttname"><a href="prod-cons_8c.html#ab0f9446b575ad1c8a51548638b7af8e0">full_slots</a></div><div class="ttdeci">sem_t full_slots</div><div class="ttdoc">Semáforo que conta o número de posições preenchidas no buffer. Inicializado com 0.</div><div class="ttdef"><b>Definição</b> <a href="#l00103">prod-cons.c:103</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_ab3926cfd7377a5ede3d3dc0a04986d13"><div class="ttname"><a href="prod-cons_8c.html#ab3926cfd7377a5ede3d3dc0a04986d13">in_idx</a></div><div class="ttdeci">int in_idx</div><div class="ttdoc">Índice onde o próximo produtor irá inserir um item no buffer.</div><div class="ttdef"><b>Definição</b> <a href="#l00079">prod-cons.c:79</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_ac4b4123acdd4ff1886c11fd9b0918f19"><div class="ttname"><a href="prod-cons_8c.html#ac4b4123acdd4ff1886c11fd9b0918f19">empty_slots</a></div><div class="ttdeci">sem_t empty_slots</div><div class="ttdoc">Semáforo que conta o número de posições vazias no buffer. Inicializado com BUFFER_SIZE.</div><div class="ttdef"><b>Definição</b> <a href="#l00097">prod-cons.c:97</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_ad43c3812e6d13e0518d9f8b8f463ffcf"><div class="ttname"><a href="prod-cons_8c.html#ad43c3812e6d13e0518d9f8b8f463ffcf">count</a></div><div class="ttdeci">int count</div><div class="ttdoc">Contador que armazena o número atual de itens no buffer.</div><div class="ttdef"><b>Definição</b> <a href="#l00073">prod-cons.c:73</a></div></div>
+<div class="ttc" id="aprod-cons_8c_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="prod-cons_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdoc">Ponto de entrada principal do programa.</div><div class="ttdef"><b>Definição</b> <a href="#l00266">prod-cons.c:266</a></div></div>
+<div class="ttc" id="astructproducer__args_html"><div class="ttname"><a href="structproducer__args.html">producer_args</a></div><div class="ttdoc">Estrutura para encapsular os argumentos a serem passados para cada thread produtora.</div><div class="ttdef"><b>Definição</b> <a href="#l00057">prod-cons.c:58</a></div></div>
+<div class="ttc" id="astructproducer__args_html_ab488bfc5d1f76143651f915915046354"><div class="ttname"><a href="structproducer__args.html#ab488bfc5d1f76143651f915915046354">producer_args::thread_id</a></div><div class="ttdeci">int thread_id</div><div class="ttdef"><b>Definição</b> <a href="#l00059">prod-cons.c:59</a></div></div>
+<div class="ttc" id="astructproducer__args_html_ade4eec1ec53e96b62203ac10a9126465"><div class="ttname"><a href="structproducer__args.html#ade4eec1ec53e96b62203ac10a9126465">producer_args::num_sales</a></div><div class="ttdeci">int num_sales</div><div class="ttdef"><b>Definição</b> <a href="#l00060">prod-cons.c:60</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="prod-cons_8c.html">prod-cons.c</a></li>
+    <li class="footer">Gerado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,23 +1,21 @@
+#define _POSIX_C_SOURCE 199309L 
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <time.h>
-
 #define SIZE 2000000000
 #define NUM_THREADS 2
 #define PARTIAL_NUM_TERMS (( SIZE ) /( NUM_THREADS ) )
 
-#define _POSIX_C_SOURCE 199309L
 
-#define CLOCK_MONOTONIC 1
 
 long double result = 0;
 pthread_mutex_t mutex;
 
 double calcular_tempo(){
     struct timespec time;
-    clock_gettime(CLOCK_MONOTONIC, &time); // errado
+    clock_gettime(CLOCK_MONOTONIC, &time);
     return (double)time.tv_sec + (double)time.tv_nsec / 1e9;    
 }
 
@@ -42,16 +40,16 @@ void * partialProcessing ( void * args ) {
     int first_therm = *(( int *) args );
     free(args);
     
-    double initial_time = calcular_tempo(); // comeca a contar o tempo de inicio
-    long double sum = partialFormula ( (int) first_therm ); // faz o calculo dos valores referentes a essa thread
-    double end_time = calcular_tempo(); // comeca a contar o tempo de fim
-    double final_time = end_time - initial_time; // calcula p tempo final 
+    double initial_time = calcular_tempo();                         // comeca a contar o tempo de inicio
+    long double sum = partialFormula ( (int) first_therm );         // faz o calculo dos valores referentes a essa thread
+    double end_time = calcular_tempo();                             // comeca a contar o tempo de fim
+    double final_time = end_time - initial_time;                    // calcula p tempo final 
     
     pthread_mutex_lock(&mutex);
     result += 4 * sum;
     pthread_mutex_unlock(&mutex);
     
-    printf("TID: %lu : %.2fs\n", (unsigned long) tid, final_time); // mostrar TID e tempo empregado na thread
+    printf("TID: %lu : %.2fs\n", (unsigned long) tid, final_time);  // mostrar TID e tempo empregado na thread
 
     return NULL;
 }

@@ -70,12 +70,20 @@ int main (){
     printf("Começando a calcular o valor de pi da série de Leibniz, com %d threads\n", NUM_THREADS);
     double total_start_time = calcular_tempo();
 
-    for(int i = 0; i < NUM_THREADS; ++i) { // apartir daqi tem algo errado
+    for (int i = 0; i < NUM_THREADS; ++i) {
         int *init = malloc(sizeof(int));
-        *init = i * (PARTIAL_NUM_TERMS);
+        *init = i * PARTIAL_NUM_TERMS;
+
+        int terms_to_compute = PARTIAL_NUM_TERMS;
+
+        // A última thread pega os termos restantes
+        if(i == NUM_THREADS - 1) {
+            terms_to_compute += SIZE % NUM_THREADS;
+        }
 
         pthread_create(&thread[i], NULL, partialProcessing, (void *)init);
     }
+
     
     for(int i = 0; i < NUM_THREADS; ++i) {
         pthread_join(thread[i], NULL);

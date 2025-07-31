@@ -5,7 +5,7 @@
 #include <sys/time.h>
 #include <time.h>
 #define SIZE 2000000000
-#define NUM_THREADS 2
+#define NUM_THREADS 8
 #define PARTIAL_NUM_TERMS ((SIZE) / (NUM_THREADS))
 
 long double result = 0;

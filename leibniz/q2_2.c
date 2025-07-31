@@ -1,16 +1,59 @@
+/**
+ * @file q2_2.c
+ * @brief Calcula uma aproximação de Pi usando a fórmula de Leibniz com paralelismo de threads.
+ *
+ * Este programa divide o cálculo da série de Leibniz em várias threads para
+ * acelerar o processamento. Cada thread calcula uma parte da série, e os
+ * resultados parciais são somados de forma segura usando um mutex para produzir
+ * a aproximação final de Pi. O tempo de execução de cada thread e o tempo total
+ * são medidos e exibidos.
+ */
+
 #define _POSIX_C_SOURCE 199309L
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <time.h>
+
+/**
+ * @def SIZE
+ * @brief O número total de termos a serem calculados na série de Leibniz.
+ */
 #define SIZE 2000000000
+
+/**
+ * @def NUM_THREADS
+ * @brief O número de threads a serem usadas para paralelizar o cálculo.
+ */
 #define NUM_THREADS 2
+
+/**
+ * @def PARTIAL_NUM_TERMS
+ * @brief O número de termos que cada thread irá processar.
+ *        Calculado como SIZE / NUM_THREADS. O resto da divisão é tratado na thread principal.
+ */
 #define PARTIAL_NUM_TERMS ((SIZE) / (NUM_THREADS))
 
+/**
+ * @var result
+ * @brief Variável global para armazenar a soma final de todas as aproximações parciais de Pi.
+ *        O acesso a esta variável é protegido por um mutex para evitar condições de corrida.
+ */
 long double result = 0;
+
+/**
+ * @var mutex
+ * @brief Mutex para garantir o acesso exclusivo à variável global `result` pelas threads.
+ */
 pthread_mutex_t mutex;
 
+/**
+ * @fn double calcular_tempo()
+ * @brief Calcula o tempo atual do sistema com alta precisão.
+ * @return O tempo atual em segundos, como um valor double. Utiliza CLOCK_MONOTONIC para
+ *         medições de tempo que não são afetadas por mudanças no relógio do sistema.
+ */
 double calcular_tempo()
 {
     struct timespec time;
@@ -18,7 +61,17 @@ double calcular_tempo()
     return (double)time.tv_sec + (double)time.tv_nsec / 1e9;
 }
 
-// se der pal dps tentar com void * e comversao de tipos pode erro de compilaçao
+/**
+ * @fn long double partialFormula(int start_term)
+ * @brief Calcula uma soma parcial da série de Leibniz.
+ *
+ * A fórmula de Leibniz para Pi é: π/4 = 1 - 1/3 + 1/5 - 1/7 + ...
+ * Esta função calcula um segmento desta série, começando em `start_term` e
+ * continuando por `PARTIAL_NUM_TERMS` iterações.
+ *
+ * @param start_term O índice inicial do termo na série a partir do qual o cálculo deve começar.
+ * @return A soma parcial dos termos calculados como um `long double`.
+ */
 long double partialFormula(int start_term)
 {
 
@@ -36,6 +89,18 @@ long double partialFormula(int start_term)
     return pi_approximation;
 }
 
+/**
+ * @fn void *partialProcessing(void *args)
+ * @brief A função de trabalho executada por cada thread.
+ *
+ * Esta função recebe o termo inicial para seu cálculo, chama `partialFormula` para
+ * obter a soma parcial, mede o tempo de execução dessa tarefa, e então adiciona
+ * seu resultado à variável global `result` de forma segura, usando um mutex.
+ *
+ * @param args Um ponteiro para um inteiro alocado dinamicamente que contém o termo inicial
+ *             para o cálculo desta thread. A memória para `args` é liberada dentro da função.
+ * @return NULL.
+ */
 void *partialProcessing(void *args)
 {
     pthread_t tid = pthread_self();
@@ -56,6 +121,23 @@ void *partialProcessing(void *args)
     return NULL;
 }
 
+/**
+ * @fn int main()
+ * @brief Ponto de entrada principal do programa.
+ *
+ * A função `main` inicializa o mutex, cria e gerencia as threads, mede o tempo
+ * total de execução, e exibe o resultado final.
+ * - Inicializa o mutex.
+ * - Inicia a contagem do tempo total.
+ * - Cria `NUM_THREADS` threads, passando a cada uma o seu termo inicial para o cálculo.
+ *   A última thread é designada para calcular quaisquer termos remanescentes da divisão inteira.
+ * - Aguarda a conclusão de todas as threads com `pthread_join`.
+ * - Para a contagem do tempo total.
+ * - Destrói o mutex.
+ * - Imprime o valor aproximado de Pi e o tempo total de execução.
+ *
+ * @return EXIT_SUCCESS em caso de sucesso.
+ */
 int main()
 {
 

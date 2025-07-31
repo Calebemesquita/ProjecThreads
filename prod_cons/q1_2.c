@@ -1,28 +1,31 @@
+/**
+ * @file q1_2.c
+ * @brief Simulação do problema Produtor-Consumidor com múltiplos produtores e consumidores.
+ *
+ * Este programa implementa uma solução para o problema clássico do Produtor-Consumidor
+ * utilizando múltiplas threads para produtores (caixas de uma loja) e consumidores (gerentes).
+ * A comunicação entre eles é feita através de um buffer circular compartilhado.
+ *
+ * A sincronização é gerenciada pelos seguintes primitivos:
+ * - Mutex (`mutex`): Garante acesso exclusivo ao buffer compartilhado e às variáveis
+ *   de controle (`count`, `in_idx`, `out_idx`, `active_producers`), prevenindo condições de corrida.
+ * - Semáforo (`empty_slots`): Controla o número de posições vazias no buffer. Produtores
+ *   esperam neste semáforo se o buffer estiver cheio.
+ * - Semáforo (`full_slots`): Controla o número de itens disponíveis no buffer. Consumidores
+ *   esperam neste semáforo se o buffer estiver vazio.
+ *
+ * A lógica de término é coordenada pela variável `active_producers`. Cada produtor, ao
+ * concluir seu trabalho, decrementa este contador. O último produtor a terminar notifica
+ * todas as threads consumidoras (via `sem_post`) para que elas possam verificar a condição
+ * de término (não há produtores ativos e o buffer está vazio) e encerrar sua execução.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <unistd.h>
 #include <time.h>
-
-/**
- * @file prod-cons-multi.c
- * @brief Simulação do problema Produtor-Consumidor com múltiplos produtores e múltiplos consumidores.
- *
- * Esta versão adapta a solução para o cenário com 6 produtores (caixas) e 2 consumidores (gerentes).
- * A principal mudança está na lógica do consumidor. Em vez de um único gerente esperar o buffer
- * encher para processar um lote, agora múltiplos gerentes competem para processar vendas
- * individuais assim que elas se tornam disponíveis.
- *
- * A sincronização foi ajustada para o padrão clássico:
- * - **Mutex (`mutex`):** Continua protegendo o acesso ao buffer e às variáveis compartilhadas.
- * - **Semáforos (`empty_slots`, `full_slots`):** Agora, `full_slots` é o principal mecanismo
- * de sincronização para os consumidores. Um consumidor espera em `sem_wait(&full_slots)`
- * até que haja pelo menos um item para ser consumido. Isso permite o consumo paralelo.
- * - **Variável de Condição (`buffer_full_cond`):** Foi removida da lógica principal do consumidor,
- * pois eles não esperam mais o buffer encher. É mantida para o broadcast final, garantindo
- * que todas as threads acordem e terminem corretamente quando a produção cessar.
- */
 
 /**
  * @def BUFFER_SIZE
@@ -61,7 +64,6 @@ typedef struct
     int thread_id;
 } consumer_args;
 
-
 double buffer[BUFFER_SIZE];
 int count = 0;
 int in_idx = 0;
@@ -77,10 +79,17 @@ volatile int active_producers = NUM_PRODUCERS;
 
 /**
  * @fn void *producer(void *args)
- * @brief Função da thread produtora. Lógica praticamente inalterada.
+ * @brief Função executada pelas threads produtoras.
  *
- * Produz um item, espera por um slot vazio, bloqueia o mutex, insere no buffer,
- * desbloqueia o mutex e sinaliza que um slot foi preenchido.
+ * Cada produtor gera um número pré-definido de vendas (itens). Para cada venda,
+ * ele aguarda um espaço livre no buffer (`sem_wait(&empty_slots)`), adquire o
+ * bloqueio do mutex, insere o item, atualiza os contadores e libera o mutex.
+ * Por fim, sinaliza que um novo item está disponível para consumo (`sem_post(&full_slots)`).
+ * Ao final de sua produção, decrementa o contador `active_producers` e, se for o
+ * último produtor, acorda as threads consumidoras para que possam encerrar.
+ *
+ * @param args Ponteiro para uma estrutura `producer_args` contendo o ID da thread e o número de vendas a produzir.
+ * @return NULL.
  */
 void *producer(void *args)
 {
@@ -107,17 +116,18 @@ void *producer(void *args)
         sleep((rand() % 3) + 1); // Pausa menor para aumentar a concorrência
     }
 
+    // No final do producer
     pthread_mutex_lock(&mutex);
     active_producers--;
     printf(">>>> (P) Caixa %d finalizou. Produtores ativos: %d <<<<\n", tid, active_producers);
-    // Se for o último produtor, acorda todos os consumidores para que possam terminar.
     if (active_producers == 0)
     {
-        // Usamos broadcast para garantir que TODOS os consumidores que possam estar esperando
-        // sejam acordados para verificar a condição de término.
-        sem_post(&full_slots); // Post extra para caso um consumidor esteja preso no semáforo
-        sem_post(&full_slots); // Um para cada consumidor
-        pthread_cond_broadcast(&buffer_empty_cond);
+        // Acorda TODOS os consumidores que possam estar esperando no sem_wait.
+        // Eles irão acordar, verificar a condição de término e sair.
+        for (int i = 0; i < NUM_CONSUMERS; i++)
+        {
+            sem_post(&full_slots);
+        }
     }
     pthread_mutex_unlock(&mutex);
 
@@ -127,12 +137,17 @@ void *producer(void *args)
 
 /**
  * @fn void *consumer(void *args)
- * @brief Função da thread consumidora, redesenhada para múltiplos consumidores.
+ * @brief Função executada pelas threads consumidoras.
  *
- * Em vez de esperar o buffer encher, cada consumidor agora espera por um único item
- * disponível usando `sem_wait(&full_slots)`. Isso permite que múltiplos consumidores
- * processem itens em paralelo. A lógica de "calcular média de 5" foi removida,
- * pois não é compatível com este modelo de consumo concorrente.
+ * Cada consumidor opera em um loop infinito, tentando processar vendas. Ele aguarda
+ * até que um item esteja disponível no buffer (`sem_wait(&full_slots)`). Após ser
+ * acordado, ele verifica a condição de término: se não há mais produtores ativos e
+ * o buffer está vazio. Se a condição for verdadeira, ele encerra. Caso contrário,
+ * ele adquire o bloqueio do mutex, consome um item do buffer, atualiza os contadores,
+ * libera o mutex e sinaliza que um espaço no buffer foi liberado (`sem_post(&empty_slots)`).
+ *
+ * @param args Ponteiro para uma estrutura `consumer_args` contendo o ID da thread.
+ * @return NULL.
  */
 void *consumer(void *args)
 {
@@ -140,35 +155,41 @@ void *consumer(void *args)
     int tid = c_args->thread_id;
     int sales_processed = 0;
 
-    // Loop principal: continua enquanto houver produtores ativos OU itens no buffer.
-    while (active_producers > 0 || count > 0)
+    while (1)
     {
-        // Espera até que haja pelo menos um item no buffer.
-        // Este é o principal ponto de bloqueio e sincronização para o consumidor.
+        // Espera por um item. Este é o ponto de bloqueio.
         sem_wait(&full_slots);
 
-        // Se foi acordado, mas não há mais nada a fazer, sai.
-        // Isso acontece no final, quando os produtores terminam.
-        if (active_producers == 0 && count == 0) {
+        // Após acordar, a primeira coisa é verificar se devemos terminar.
+        // Bloqueamos o mutex para ler 'count' e 'active_producers' de forma segura.
+        pthread_mutex_lock(&mutex);
+        if (active_producers == 0 && count == 0)
+        {
+            // Não há mais produtores e o buffer está vazio. O trabalho acabou.
+            // Precisamos liberar o mutex antes de sair.
+            pthread_mutex_unlock(&mutex);
+
+            // Como consumimos um 'sem_wait' para entrar aqui,
+            // mas não vamos consumir um item, precisamos devolver o "ticket"
+            // para que outra thread consumidora também possa sair.
+            sem_post(&full_slots);
+
             break;
         }
 
-        pthread_mutex_lock(&mutex);
-        
-        // Checagem dupla para evitar consumir de um buffer vazio no final da execução
-        if(count > 0) {
-            double sale_value = buffer[out_idx];
-            out_idx = (out_idx + 1) % BUFFER_SIZE;
-            count--;
-            sales_processed++;
+        // Se chegamos aqui, há um item para consumir.
+        double sale_value = buffer[out_idx];
+        out_idx = (out_idx + 1) % BUFFER_SIZE;
+        count--;
+        sales_processed++;
 
-            printf("    (C) TID %d | PROCESSOU: R$ %.2f | Buffer: %d/%d\n",
-                   tid, sale_value, count, BUFFER_SIZE);
-        }
+        printf("    (C) TID %d | PROCESSOU: R$ %.2f | Buffer: %d/%d\n",
+               tid, sale_value, count, BUFFER_SIZE);
 
         pthread_mutex_unlock(&mutex);
 
-        sem_post(&empty_slots); // Sinaliza que um slot ficou vazio
+        // Libera um slot vazio para os produtores.
+        sem_post(&empty_slots);
     }
 
     printf(">>>> (C) Gerente %d finalizou. Total de vendas processadas: %d <<<<\n", tid, sales_processed);
@@ -176,6 +197,16 @@ void *consumer(void *args)
     pthread_exit(NULL);
 }
 
+/**
+ * @fn int main()
+ * @brief Ponto de entrada principal do programa.
+ *
+ * Inicializa os primitivos de sincronização (mutex e semáforos), cria as threads
+ * produtoras e consumidoras, e aguarda a conclusão de todas elas usando `pthread_join`.
+ * Após o término das threads, destrói os primitivos de sincronização e finaliza o programa.
+ *
+ * @return 0 em caso de sucesso, ou um código de erro em caso de falha.
+ */
 int main()
 {
     pthread_t producers[NUM_PRODUCERS];
@@ -188,7 +219,7 @@ int main()
 
     // Inicializa semáforos
     sem_init(&empty_slots, 0, BUFFER_SIZE); // Começa com N slots vazios
-    sem_init(&full_slots, 0, 0);          // Começa com 0 slots preenchidos
+    sem_init(&full_slots, 0, 0);            // Começa com 0 slots preenchidos
 
     printf("--- Iniciando Simulação com %d Produtores e %d Consumidores ---\n\n",
            NUM_PRODUCERS, NUM_CONSUMERS);
@@ -215,10 +246,11 @@ int main()
     {
         pthread_join(producers[i], NULL);
     }
-    
+
     // Após os produtores terminarem, precisamos garantir que os consumidores acordem
     // caso estejam esperando em sem_wait.
-    for (int i = 0; i < NUM_CONSUMERS; i++) {
+    for (int i = 0; i < NUM_CONSUMERS; i++)
+    {
         sem_post(&full_slots);
     }
 

@@ -1,20 +1,63 @@
+/**
+ * @file q2_1.c
+ * @brief Calcula uma aproximação de Pi usando a fórmula de Leibniz com múltiplas threads.
+ *
+ * Este programa divide o cálculo da série de Leibniz entre um número definido de threads
+ * para acelerar a computação. Cada thread calcula uma porção da série, e os resultados
+ * parciais são somados de forma segura usando um mutex para produzir o resultado final.
+ * O tempo de execução de cada thread e o tempo total de execução são medidos e exibidos.
+ */
+
 #define _POSIX_C_SOURCE 199309L
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <time.h>
+
+/**
+ * @def SIZE
+ * @brief O número total de termos a serem calculados na série de Leibniz.
+ */
 #define SIZE 2000000000
+
+/**
+ * @def NUM_THREADS
+ * @brief O número de threads a serem usadas para paralelizar o cálculo.
+ */
 #define NUM_THREADS 2
+
+/**
+ * @def PARTIAL_NUM_TERMS
+ * @brief O número de termos que cada thread irá processar.
+ *
+ * É calculado como o número total de termos (SIZE) dividido pelo número de threads (NUM_THREADS).
+ * Note que o resto da divisão não é distribuído uniformemente neste cálculo.
+ */
 #define PARTIAL_NUM_TERMS ((SIZE) / (NUM_THREADS))
 
 /**
- * essa deve ser a versao sequencial do leibniz
+ * @var result
+ * @brief Variável global para armazenar o resultado final da aproximação de Pi.
+ *
+ * Esta variável é acessada por todas as threads e protegida por um mutex para evitar
+ * condições de corrida.
  */
-
 long double result = 0;
+
+/**
+ * @var mutex
+ * @brief Mutex para sincronizar o acesso à variável global `result`.
+ */
 pthread_mutex_t mutex;
 
+/**
+ * @fn double calcular_tempo()
+ * @brief Calcula o tempo atual de alta precisão.
+ * @return O tempo atual em segundos, como um valor double. Utiliza CLOCK_MONOTONIC
+ *         para garantir que o tempo seja sempre crescente e não afetado por mudanças
+ *         no relógio do sistema.
+ */
 double calcular_tempo()
 {
     struct timespec time;
@@ -22,7 +65,17 @@ double calcular_tempo()
     return (double)time.tv_sec + (double)time.tv_nsec / 1e9;
 }
 
-// se der pal dps tentar com void * e comversao de tipos pode erro de compilaçao
+/**
+ * @fn long double partialFormula(int start_term)
+ * @brief Calcula uma soma parcial da série de Leibniz.
+ *
+ * A fórmula é: Σ (-1)^k / (2k + 1)
+ * Esta função calcula um número fixo de termos (`PARTIAL_NUM_TERMS`) a partir de um
+ * índice inicial.
+ *
+ * @param start_term O índice 'k' inicial para o somatório.
+ * @return A soma parcial calculada como um `long double`.
+ */
 long double partialFormula(int start_term)
 {
 
@@ -40,6 +93,19 @@ long double partialFormula(int start_term)
     return pi_approximation;
 }
 
+/**
+ * @fn void *partialProcessing(void *args)
+ * @brief Função executada por cada thread.
+ *
+ * Esta função gerencia o trabalho de uma única thread. Ela recebe o termo inicial,
+ * calcula a soma parcial chamando `partialFormula`, mede seu próprio tempo de execução,
+ * e adiciona seu resultado parcial à variável global `result` de forma segura.
+ *
+ * @param args Um ponteiro para um inteiro alocado dinamicamente, que representa o
+ *             termo inicial para o cálculo desta thread. A memória para `args` é
+ *             liberada dentro desta função.
+ * @return NULL.
+ */
 void *partialProcessing(void *args)
 {
     pthread_t tid = pthread_self();
@@ -60,6 +126,16 @@ void *partialProcessing(void *args)
     return NULL;
 }
 
+/**
+ * @fn int main()
+ * @brief Ponto de entrada principal do programa.
+ *
+ * Inicializa o mutex, cria e gerencia as threads, distribui o trabalho entre elas,
+ * aguarda a conclusão de todas as threads, e então calcula e exibe o resultado final
+ * da aproximação de Pi e o tempo total de execução. Por fim, destrói o mutex.
+ *
+ * @return EXIT_SUCCESS em caso de sucesso.
+ */
 int main()
 {
 

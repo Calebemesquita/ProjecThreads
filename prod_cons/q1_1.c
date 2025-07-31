@@ -1,12 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <unistd.h>
-#include <time.h>
-
 /**
- * @file prod-cons.c
+ * @file q1_1.c
  * @brief Simulação do problema Produtor-Consumidor usando pthreads, semáforos e variáveis de condição.
  *
  * Este programa implementa uma solução para o problema clássico do produtor-consumidor.
@@ -26,6 +19,13 @@
  *   tenham terminado seu trabalho. Os produtores sinalizam (`pthread_cond_signal`) quando o buffer enche,
  *   e um `broadcast` é usado no final para garantir que o consumidor acorde e termine.
  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <time.h>
 
 /**
  * @def BUFFER_SIZE

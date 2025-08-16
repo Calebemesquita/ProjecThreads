@@ -22,12 +22,6 @@
 #define SIZE 2000000000
 
 /**
- * @def NUM_THREADS
- * @brief O número de threads a serem usadas para paralelizar o cálculo.
- */
-#define NUM_THREADS 2
-
-/**
  * @def PARTIAL_NUM_TERMS
  * @brief O número de termos que cada thread irá processar.
  *
@@ -46,12 +40,6 @@
 long double result = 0;
 
 /**
- * @var mutex
- * @brief Mutex para sincronizar o acesso à variável global `result`.
- */
-pthread_mutex_t mutex;
-
-/**
  * @fn double calcular_tempo()
  * @brief Calcula o tempo atual de alta precisão.
  * @return O tempo atual em segundos, como um valor double. Utiliza CLOCK_MONOTONIC
@@ -65,32 +53,18 @@ double calcular_tempo()
     return (double)time.tv_sec + (double)time.tv_nsec / 1e9;
 }
 
-/**
- * @fn long double partialFormula(int start_term)
- * @brief Calcula uma soma parcial da série de Leibniz.
- *
- * A fórmula é: Σ (-1)^k / (2k + 1)
- * Esta função calcula um número fixo de termos (`PARTIAL_NUM_TERMS`) a partir de um
- * índice inicial.
- *
- * @param start_term O índice 'k' inicial para o somatório.
- * @return A soma parcial calculada como um `long double`.
- */
-long double partialFormula(int start_term)
+long double calculationFormula(int start_therm)
 {
-
-    const int num_terms = start_term + PARTIAL_NUM_TERMS;
-
     long double pi_approximation = 0;
     double signal = 1.0;
 
-    for (int k = start_term; k < num_terms; k++)
+    for (int k = start_therm; k < SIZE; k++)
     {
         pi_approximation += signal / (2 * k + 1);
         signal *= -1.0;
     }
 
-    return pi_approximation;
+    return 4 * pi_approximation;
 }
 
 /**
@@ -139,45 +113,10 @@ void *partialProcessing(void *args)
 int main()
 {
 
-    // criar um mutex
-    pthread_mutex_init(&mutex, NULL);
-    // criar as threads
-    pthread_t thread[NUM_THREADS];
-    unsigned long args[NUM_THREADS];
-
-    // dividir o tamanho total pelo número de threads
-    long long remainder = SIZE % NUM_THREADS;
-
-    // começamos a calcular o tempo de inicio do procesamento
-    printf("Começando a calcular o valor de pi da série de Leibniz, com %d threads\n", NUM_THREADS);
     double total_start_time = calcular_tempo();
-
-    for (int i = 0; i < NUM_THREADS; ++i)
-    {
-        int *init = malloc(sizeof(int));
-        *init = i * PARTIAL_NUM_TERMS;
-
-        int terms_to_compute = PARTIAL_NUM_TERMS;
-
-        // A última thread pega os termos restantes
-        if (i == NUM_THREADS - 1)
-        {
-            terms_to_compute += SIZE % NUM_THREADS;
-        }
-
-        pthread_create(&thread[i], NULL, partialProcessing, (void *)init);
-    }
-
-    for (int i = 0; i < NUM_THREADS; ++i)
-    {
-        pthread_join(thread[i], NULL);
-    }
-
+    result = calculationFormula(0);
     double total_time_end = calcular_tempo();
     double total_final_time = total_time_end - total_start_time;
-
-    /* Liberar o mutex */
-    pthread_mutex_destroy(&mutex);
 
     printf("\nValor aproximado de pi: %.15Lf\n", result);
     printf("Tempo total de execução: %.2fs\n", total_final_time);

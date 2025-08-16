@@ -22,17 +22,8 @@
  */
 #define SIZE 2000000000
 
-/**
- * @def NUM_THREADS
- * @brief O número de threads a serem usadas para paralelizar o cálculo.
- */
-#define NUM_THREADS 2
+#define NUM_THREADS 8
 
-/**
- * @def PARTIAL_NUM_TERMS
- * @brief O número de termos que cada thread irá processar.
- *        Calculado como SIZE / NUM_THREADS. O resto da divisão é tratado na thread principal.
- */
 #define PARTIAL_NUM_TERMS ((SIZE) / (NUM_THREADS))
 
 /**

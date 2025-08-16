@@ -24,7 +24,7 @@ long double calculationFormula(int start_therm)
     long double pi_approximation = 0;
     double signal = 1.0;
 
-    for (int k = start_therm; k <= SIZE; k++)
+    for (int k = start_therm; k < SIZE; k++)
     {
         pi_approximation += signal / (2 * k + 1);
         signal *= -1.0;
